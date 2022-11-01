@@ -78,7 +78,7 @@ bundle agent inventory_openssl_versions
         string => nth(
           string_split(
             execresult("yum --quiet list installed openssl 2>/dev/null | grep openssl", "useshell"),
-            " ",
+            "\s+",
             3),
           1);
 

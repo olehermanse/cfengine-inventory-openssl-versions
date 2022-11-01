@@ -1,0 +1,80 @@
+body file control
+{
+  namespace => "inventory_openssl_versions";
+}
+
+bundle agent inventory_openssl_versions
+{
+# Look for openssl version based on using the openssl binary:
+  classes:
+    "openssl_binary_works"
+      if => returnszero("openssl version 2>&1 1>/dev/null", "useshell");
+  vars:
+    openssl_binary_works::
+      "openssl_versions[cli]"
+        string => nth(
+          string_split(execresult("openssl version", "useshell"), " ", 3),
+          1);
+
+# Look for openssl version in apt:
+  classes:
+    "openssl_found_in_apt"
+        if => returnszero("apt-cache policy openssl | grep Installed 1>/dev/null", "useshell");
+  vars:
+    openssl_found_in_apt::
+      "openssl_versions[apt]"
+        string => nth(
+          string_split(
+            string_trim(execresult("apt-cache policy openssl | grep Installed", "useshell")), 
+            " ",
+            3),
+          1);
+
+# Look for openssl version in brew:
+  vars:
+    "brew_binary"
+      string => "/home/linuxbrew/.linuxbrew/bin/brew",
+      if => fileexists("/home/linuxbrew/.linuxbrew/bin/brew");
+    "brew_binary"
+      string => "/usr/local/bin/brew",
+      if => fileexists("/usr/local/bin/brew");
+  classes:
+    "brew_binary_exists"
+      if => fileexists("$(brew_binary)");
+  vars:
+    brew_binary_exists::
+      "brew_user"
+        string => filestat("$(brew_binary)", "uid");
+      "brew_list_openssl"
+        string => "$(brew_binary) list --versions openssl";
+      "sudo_brew_list_openssl"
+        string => "sudo --user='#$(brew_user)' $(brew_list_openssl)";
+      "brew_list_openssl_dev_null"
+        string => "$(brew_list_openssl) 2>/dev/null 1>/dev/null";
+      "sudo_brew_list_openssl_dev_null"
+        string => "sudo --user='#$(brew_user)' $(brew_list_openssl_dev_null)";
+
+  classes:
+    brew_binary_exists::
+      "openssl_found_in_brew"
+          if => returnszero("$(sudo_brew_list_openssl_dev_null)", "useshell");
+  vars:
+    openssl_found_in_brew::
+      "openssl_versions[brew]"
+        string => nth(
+          string_split(
+            execresult("$(sudo_brew_list_openssl)", "useshell"),
+            " ",
+            3),
+          1);
+
+# Collect all the found openssl versions:
+  vars:
+    "openssl_versions_inventory"
+      slist => sort(unique(getvalues(openssl_versions))),
+      meta => {"inventory", "attribute_name=OpenSSL version(s)"};
+
+  reports:
+    DEBUG|DEBUG_INVENTORY_OPENSSL_VERSIONS::
+      "OpenSSL version(s): $(openssl_versions_inventory)";
+}

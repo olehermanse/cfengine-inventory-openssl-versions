@@ -6,7 +6,7 @@ It looks for OpenSSL in a few different ways:
 * Package managers:
   * `apt` - uses `apt-cache policy openssl` command
   * `brew` - uses `brew list --versions openssl` command
-  * `yum` - **Not implemented yet**
+  * `yum` - uses `yum list installed openssl` command
 
 Note that in CFEngine Enterprise, you have software inventory available by default, which takes all software names and version numbers from the chosen package manager (for example `apt`).
 Using the module provides an alternative - it looks for OpenSSL in more places, and adds it to _Inventory_, which is not the standard place for installed software versions.

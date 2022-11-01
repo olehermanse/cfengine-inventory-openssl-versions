@@ -8,7 +8,7 @@ bundle agent inventory_openssl_versions
 # Look for openssl version based on using the openssl binary:
   classes:
     "openssl_binary_works"
-      if => returnszero("openssl version 2>&1 1>/dev/null", "useshell");
+      if => returnszero("openssl version 1>/dev/null 2>&1", "useshell");
   vars:
     openssl_binary_works::
       "openssl_versions[cli]"
@@ -19,7 +19,7 @@ bundle agent inventory_openssl_versions
 # Look for openssl version in apt:
   classes:
     "openssl_found_in_apt"
-        if => returnszero("apt-cache policy openssl | grep Installed 1>/dev/null", "useshell");
+        if => returnszero("apt-cache policy openssl 2>/dev/null | grep Installed 1>/dev/null", "useshell");
   vars:
     openssl_found_in_apt::
       "openssl_versions[apt]"
@@ -71,7 +71,7 @@ bundle agent inventory_openssl_versions
 # Look for openssl version in yum:
   classes:
     "openssl_found_in_yum"
-      if => returnszero("yum list installed openssl 2>&1 1>/dev/null", "useshell");
+      if => returnszero("yum list installed openssl 1>/dev/null 2>&1", "useshell");
   vars:
     openssl_found_in_yum::
       "openssl_versions[yum]"

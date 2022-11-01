@@ -8,7 +8,7 @@
       "tags": ["inventory", "security", "experimental"],
       "repo": "https://github.com/olehermanse/cfengine-inventory-openssl-versions",
       "by": "https://github.com/olehermanse",
-      "version": "0.0.1",
+      "version": "0.2.0",
       "steps": [
           "copy inventory-openssl-versions.cf services/cfbs/modules/inventory-openssl-versions/inventory-openssl-versions.cf",
           "policy_files services/cfbs/modules/inventory-openssl-versions/inventory-openssl-versions.cf",

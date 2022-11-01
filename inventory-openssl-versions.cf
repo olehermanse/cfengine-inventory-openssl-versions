@@ -7,8 +7,9 @@ bundle agent inventory_openssl_versions
 {
 # Look for openssl version based on using the openssl binary:
   classes:
-    "openssl_binary_works"
-      if => returnszero("openssl version 1>/dev/null 2>&1", "useshell");
+    !windows::
+      "openssl_binary_works"
+        if => returnszero("openssl version 1>/dev/null 2>&1", "useshell");
   vars:
     openssl_binary_works::
       "openssl_versions[cli]"
@@ -18,8 +19,9 @@ bundle agent inventory_openssl_versions
 
 # Look for openssl version in apt:
   classes:
-    "openssl_found_in_apt"
-        if => returnszero("apt-cache policy openssl 2>/dev/null | grep Installed 1>/dev/null", "useshell");
+    !windows::
+      "openssl_found_in_apt"
+          if => returnszero("apt-cache policy openssl 2>/dev/null | grep Installed 1>/dev/null", "useshell");
   vars:
     openssl_found_in_apt::
       "openssl_versions[apt]"
@@ -32,15 +34,17 @@ bundle agent inventory_openssl_versions
 
 # Look for openssl version in brew:
   vars:
-    "brew_binary"
-      string => "/home/linuxbrew/.linuxbrew/bin/brew",
-      if => fileexists("/home/linuxbrew/.linuxbrew/bin/brew");
-    "brew_binary"
-      string => "/usr/local/bin/brew",
-      if => fileexists("/usr/local/bin/brew");
+    !windows::
+      "brew_binary"
+        string => "/home/linuxbrew/.linuxbrew/bin/brew",
+        if => fileexists("/home/linuxbrew/.linuxbrew/bin/brew");
+      "brew_binary"
+        string => "/usr/local/bin/brew",
+        if => fileexists("/usr/local/bin/brew");
   classes:
-    "brew_binary_exists"
-      if => fileexists("$(brew_binary)");
+    !windows::
+      "brew_binary_exists"
+        if => fileexists("$(brew_binary)");
   vars:
     brew_binary_exists::
       "brew_user"
@@ -70,8 +74,9 @@ bundle agent inventory_openssl_versions
 
 # Look for openssl version in yum:
   classes:
-    "openssl_found_in_yum"
-      if => returnszero("yum list installed openssl 1>/dev/null 2>&1", "useshell");
+    !windows::
+      "openssl_found_in_yum"
+        if => returnszero("yum list installed openssl 1>/dev/null 2>&1", "useshell");
   vars:
     openssl_found_in_yum::
       "openssl_versions[yum]"

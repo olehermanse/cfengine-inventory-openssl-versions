@@ -6,9 +6,9 @@
     "inventory-openssl-versions": {
       "description": "Adds an inventory attribute containing all versions of OpenSSL found on the system.",
       "tags": ["inventory", "security", "experimental"],
-      "version": "0.0.1",
-      "by": "https://github.com/olehermanse",
       "repo": "https://github.com/olehermanse/cfengine-inventory-openssl-versions",
+      "by": "https://github.com/olehermanse",
+      "version": "0.0.1",
       "steps": [
           "copy inventory-openssl-versions.cf services/cfbs/modules/inventory-openssl-versions/inventory-openssl-versions.cf",
           "policy_files services/cfbs/modules/inventory-openssl-versions/inventory-openssl-versions.cf",
